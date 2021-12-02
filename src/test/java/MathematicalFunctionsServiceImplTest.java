@@ -64,26 +64,4 @@ public class MathematicalFunctionsServiceImplTest {
         //then
         assertEquals("You try divide by zero!", exception.getMessage());
     }
-
-    @Test
-    public void resultShouldBeRoundedToFourDecimalPlaces() {
-        //given
-        double firstNumber = 1;
-        double secondNumber = 3;
-        //when
-        double result = mathematicalFunctionsService.divide(firstNumber, secondNumber);
-        //then
-        assertEquals(0.3333, result);
-    }
-
-    @Test
-    public void resultShouldBeRoundedUpToFourDecimalPlaces() {
-        //given
-        double firstNumber = 1;
-        double secondNumber = 6;
-        //when
-        double result = mathematicalFunctionsService.divide(firstNumber, secondNumber);
-        //then
-        assertEquals(0.1667, result);
-    }
 }

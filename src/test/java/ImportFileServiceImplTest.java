@@ -21,4 +21,20 @@ class ImportFileServiceImplTest {
         assertEquals(calculationResult.getFunction(), result.getFunction());
         assertEquals(calculationResult.getValue(), result.getValue());
     }
+
+    @Test
+    public void fileCalculationShouldGivenCorrectResultWhenTheFunctionContainsNegativeValue() {
+
+        //given
+        String file = "src/test/resources/example2.txt";
+        Row calculationResult = new Row(6, "RESULT", -6.0);
+
+        //when
+        Row result = importFileService.fileCalculateResult(file);
+
+        //then
+        assertEquals(calculationResult.getRowNumber(), result.getRowNumber());
+        assertEquals(calculationResult.getFunction(), result.getFunction());
+        assertEquals(calculationResult.getValue(), result.getValue());
+    }
 }

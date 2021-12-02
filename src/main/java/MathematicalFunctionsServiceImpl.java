@@ -22,9 +22,4 @@ public class MathematicalFunctionsServiceImpl implements MathematicalFunctionsSe
         }
         return firstNumber / secondNumber;
     }
-
-    private double roundUp(double number) {
-        long round = Math.round(number * 10000);
-        return round / 10000d;
-    }
 }

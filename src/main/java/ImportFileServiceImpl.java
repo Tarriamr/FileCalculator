@@ -101,6 +101,8 @@ public class ImportFileServiceImpl implements ImportFileService {
     private String symbol(char c) {
         if (c == ',' || c == '.') {
             return ".";
+        } else if (c == '-') {
+            return "-";
         } else {
             return "";
         }
