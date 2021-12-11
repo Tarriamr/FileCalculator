@@ -1,3 +1,8 @@
+import java.util.List;
+
 public interface ImportFileService {
-    Row fileCalculateResult(String file);
+
+    Row taskCalculations(Integer startRowNumber, Row rowApplyData, String file);
+
+    List<Row> rowApplyData(String file);
 }

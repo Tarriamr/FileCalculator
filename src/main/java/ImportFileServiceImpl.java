@@ -1,42 +1,48 @@
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ImportFileServiceImpl implements ImportFileService {
 
     @Override
-    public Row fileCalculateResult(String file) {
+    public Row taskCalculations(Integer startRowNumber, Row rowApplyData, String file) {
 
         String line;
         Row rowData;
         ReaderFile readerFile = new ReaderFileImpl();
 
-        Row rowApplyData = rowApplyData(file);
         Row calculationResult = new Row(Objects.requireNonNull(rowApplyData).getRowNumber(), "RESULT", rowApplyData.getValue());
         MathematicalFunctionsService mathematicalFunctionsService = new MathematicalFunctionsServiceImpl();
 
         try {
             LineNumberReader lineNumberReader = new LineNumberReader(readerFile.readerFile(file));
             while ((line = lineNumberReader.readLine()) != null) {
-                rowData = rowConvertToFunctionAndNumber(line);
+                if (lineNumberReader.getLineNumber() >= startRowNumber && lineNumberReader.getLineNumber() <= rowApplyData.getRowNumber()) {
+                    rowData = rowConvertToFunctionAndNumber(line);
 
-                switch (rowData.getFunction()) {
-                    case "ADD":
-                        calculationResult.setValue(mathematicalFunctionsService.add(calculationResult.getValue(), rowData.getValue()));
-                        break;
-                    case "SUBTRACT":
-                        calculationResult.setValue(mathematicalFunctionsService.subtract(calculationResult.getValue(), rowData.getValue()));
-                        break;
-                    case "MULTIPLY":
-                        calculationResult.setValue(mathematicalFunctionsService.multiply(calculationResult.getValue(), rowData.getValue()));
-                        break;
-                    case "DIVIDE":
-                        calculationResult.setValue(mathematicalFunctionsService.divide(calculationResult.getValue(), rowData.getValue()));
-                        break;
-                    case "APPLY":
-                        return calculationResult;
-                    case default:
-                        System.out.printf(" In line: %d%n There is an invalid function: %s", lineNumberReader.getLineNumber(), rowData.getFunction());
+                    switch (rowData.getFunction()) {
+                        case "ADD" -> calculationResult.setValue(mathematicalFunctionsService.add(calculationResult.getValue(), rowData.getValue()));
+                        case "SUBTRACT" -> calculationResult.setValue(mathematicalFunctionsService.subtract(calculationResult.getValue(), rowData.getValue()));
+                        case "MULTIPLY" -> calculationResult.setValue(mathematicalFunctionsService.multiply(calculationResult.getValue(), rowData.getValue()));
+                        case "DIVIDE" -> calculationResult.setValue(mathematicalFunctionsService.divide(calculationResult.getValue(), rowData.getValue()));
+                        case "APPLY" -> {
+                            return calculationResult;
+                        }
+                        case "" -> {
+                            if (!line.isEmpty()) {
+                                System.out.printf("""
+                                        Line: %d - has been omitted.
+                                            The line is incorrect: %s
+                                        """, lineNumberReader.getLineNumber(), line);
+                            }
+                        }
+                        case default -> System.out.printf("""
+                                Line: %d - has been omitted.
+                                    There is an invalid function: %s
+                                """, lineNumberReader.getLineNumber(), rowData.getFunction());
+                    }
                 }
             }
         } catch (IOException e) {
@@ -45,8 +51,9 @@ public class ImportFileServiceImpl implements ImportFileService {
         return null;
     }
 
-    private Row rowApplyData(String file) {
+    public List<Row> rowApplyData(String file) {
 
+        List<Row> result = new ArrayList<>();
         String line;
         Row rowData;
         ReaderFile readerFile = new ReaderFileImpl();
@@ -57,14 +64,14 @@ public class ImportFileServiceImpl implements ImportFileService {
                 rowData = rowConvertToFunctionAndNumber(line);
                 if (Objects.equals(rowData.getFunction(), "APPLY")) {
                     rowData.setRowNumber(lineNumberReader.getLineNumber());
-                    lineNumberReader.close();
-                    return rowData;
+                    result.add(rowData);
                 }
             }
+            lineNumberReader.close();
         } catch (IOException e) {
             return null;
         }
-        return null;
+        return result;
     }
 
     private Row rowConvertToFunctionAndNumber(String fileRow) {

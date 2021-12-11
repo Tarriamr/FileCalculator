@@ -15,11 +15,13 @@ public class FileCalculator {
 
         String file = scanner.nextLine();
 
-        Row result = importFileService.fileCalculateResult(file);
+
+        Row result = importFileService.taskCalculations(1, new Row(), file);
 
         System.out.printf("""
 
                 %d functions have been calculated.
-                The result of these calculations is: %s""", result.getRowNumber() - 1, result.getValue());
+                The result of these calculations is: %s
+                """, result.getRowNumber() - 1, result.getValue());
     }
 }

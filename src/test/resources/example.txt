@@ -1,6 +1,11 @@
 add 2
 multiply 3
 divide 6
+
+ad 3,33
 add 10
+
+
+  565
 subtract 2
 apply 10
